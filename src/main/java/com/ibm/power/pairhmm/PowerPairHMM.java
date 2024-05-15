@@ -11,7 +11,7 @@ package com.ibm.power.pairhmm;
 
 /// Provides native PairHMM code accelerated for Power vector
 /// instructions, via compiler optimizations.
-public class PowerPairHmm {
+public class PowerPairHMM {
 
 // Implement load
 
