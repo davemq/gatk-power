@@ -19,7 +19,8 @@ public class PowerPairHMM {
 
 
     static {
-	System.loadLibrary("vsx_pairhmm");
+	String str = System.mapLibraryName("vsx_pairhmm");
+	System.loadLibrary(str);
     }
 
 // Provide native subComputeReadLikelihoodGivenHaplotypeLog10Native

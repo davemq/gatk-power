@@ -7,11 +7,12 @@ find_package(JNI)
 include_directories(${JNI_INCLUDE_DIRS})
 
 # common compiler and linker settings
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2 ")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mcpu=power9 -mtune=power9 -mvsx -maltivec")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Werror=format-security -Wconversion -Wfloat-conversion -Wbool-compare")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector-all ")
-set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-overflow -fno-delete-null-pointer-checks -fwrapv ")
+set(CMAKE_C_COMPILER /usr/bin/clang)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2 ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -mcpu=power9 -mtune=power9 -mvsx -maltivec")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Werror=format-security -Wconversion -Wfloat-conversion -Wbool-compare")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fstack-protector-all ")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-overflow -fno-delete-null-pointer-checks -fwrapv ")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 if(UNIX)
