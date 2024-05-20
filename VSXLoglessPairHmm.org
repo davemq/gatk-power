@@ -169,14 +169,14 @@ public class PowerPairHMM {
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
     public native double
-	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
-							  int hapStartIndex,
-							  int paddedHaplotypeLength,
-							  double [][] matchMatrix,
-							  double [][] prior,
-							  double [][] transition,
-							  double [][] insertion,
-							  double [][] deletion);
+	subComputeReadLikelihoodGivenHaplotypeLog10Native(int,
+							  int,
+							  int,
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][]);
 }
 #+end_src
 
@@ -349,7 +349,8 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 	Get the length of the outer array.
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
-	jsize len = (*env)->GetArrayLength(env, matrix);
+	jsize jlen = (*env)->GetArrayLength(env, matrix);
+	size_t len = (size_t) jlen;
 #+end_src
 
 	Allocate src_c{jdoubleP} and src_c{jdoubleArray} arrays. We
@@ -377,7 +378,7 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
           src_c{ptrs[i]}
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
-	for (jsize i = 0; i < len; i++) {
+	for (jsize i = 0; i < jlen; i++) {
 		,*arrays[i] = (*env)->GetObjectArrayElement(env, matrix, i);
 		if (*arrays[i] == NULL) {
 			goto cleanarrays;

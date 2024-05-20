@@ -35,12 +35,12 @@ public class PowerPairHMM {
 
 
     public native double
-	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
-							  int hapStartIndex,
-							  int paddedHaplotypeLength,
-							  double [][] matchMatrix,
-							  double [][] prior,
-							  double [][] transition,
-							  double [][] insertion,
-							  double [][] deletion);
+	subComputeReadLikelihoodGivenHaplotypeLog10Native(int,
+							  int,
+							  int,
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][]);
 }
