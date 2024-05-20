@@ -6,6 +6,11 @@
 
 package com.ibm.power.pairhmm;
 
+import Java.io.File;
+import Java.net.URL;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
+
 // Class
 
 

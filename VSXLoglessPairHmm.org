@@ -130,6 +130,11 @@ our native routine return src_c{jdouble}.
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java
 package com.ibm.power.pairhmm;
+
+import Java.io.File;
+import Java.net.URL;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 #+end_src
 
 ** New Java class PowerPairHMM
