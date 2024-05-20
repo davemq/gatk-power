@@ -6,8 +6,8 @@
 
 package com.ibm.power.pairhmm;
 
-import Java.io.File;
-import Java.net.URL;
+import java.io.File;
+import java.net.URL;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 
