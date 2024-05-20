@@ -48,7 +48,8 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 	/* Get the length of the outer array. */
 
 
-	jsize len = (*env)->GetArrayLength(env, matrix);
+	jsize jlen = (*env)->GetArrayLength(env, matrix);
+	size_t len = (size_t) jlen;
 
 
 
@@ -78,7 +79,7 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
         /*   src_c{ptrs[i]} */
 
 
-	for (jsize i = 0; i < len; i++) {
+	for (jsize i = 0; i < jlen; i++) {
 		*arrays[i] = (*env)->GetObjectArrayElement(env, matrix, i);
 		if (*arrays[i] == NULL) {
 			goto cleanarrays;
