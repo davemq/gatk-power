@@ -19,7 +19,16 @@ public class PowerPairHMM {
 
 
     static {
-	System.loadLibrary("vsx_pairhmm");
+	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
+	String resourcePath = "native/" + systemLibraryName;
+	URL inputUrl = PowerPairHMM.class.getResource(resourcePath);
+	try {
+	    File temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
+					    "." + FilenameUtils.getExtension(resourcePath));
+	    FileUtils.copyURLToFile(inputUrl, temp);
+	    temp.deleteOnExit();
+	    System.load(temp.getAbsolutePath());
+	} catch (Exception|Error e) {
     }
 
 // Provide native subComputeReadLikelihoodGivenHaplotypeLog10Native

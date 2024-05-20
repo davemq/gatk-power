@@ -152,7 +152,16 @@ public class PowerPairHMM {
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
     static {
-	System.loadLibrary("vsx_pairhmm");
+	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
+	String resourcePath = "native/" + systemLibraryName;
+	URL inputUrl = PowerPairHMM.class.getResource(resourcePath);
+	try {
+	    File temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
+					    "." + FilenameUtils.getExtension(resourcePath));
+	    FileUtils.copyURLToFile(inputUrl, temp);
+	    temp.deleteOnExit();
+	    System.load(temp.getAbsolutePath());
+	} catch (Exception|Error e) {
     }
 #+end_src
 
@@ -331,6 +340,7 @@ This C function
   - save the array src_c{jdoubleArray} and the native src_c{jdoubleP}
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
+static
 jdoubleP *
 getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 {
@@ -427,6 +437,7 @@ src_c{getDouble2dArray}, but leaves out checks for NULL pointers as
 there shouldn't be any.
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
+static
 void
 releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleP *native, jdoubleArrayP *jarray)
 {
@@ -476,7 +487,7 @@ src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHmm_subComputeReadLikelihoodGivenHaplotypeLog10Native
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,

@@ -38,6 +38,7 @@ typedef jdoubleArray *jdoubleArrayP;
 /*   - save the array src_c{jdoubleArray} and the native src_c{jdoubleP} */
 
 
+static
 jdoubleP *
 getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 {
@@ -139,6 +140,7 @@ cleanptrs:
 /* there shouldn't be any. */
 
 
+static
 void
 releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleP *native, jdoubleArrayP *jarray)
 {
@@ -190,7 +192,7 @@ releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleP *native, jdouble
 
 
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHmm_subComputeReadLikelihoodGivenHaplotypeLog10Native
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
