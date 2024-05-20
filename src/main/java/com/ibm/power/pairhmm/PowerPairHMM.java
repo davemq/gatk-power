@@ -6,6 +6,11 @@
 
 package com.ibm.power.pairhmm;
 
+import Java.io.File;
+import Java.net.URL;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
+
 // Class
 
 
@@ -19,20 +24,28 @@ public class PowerPairHMM {
 
 
     static {
-	String str = System.mapLibraryName("vsx_pairhmm");
-	System.loadLibrary(str);
+	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
+	String resourcePath = "native/" + systemLibraryName;
+	URL inputUrl = PowerPairHMM.class.getResource(resourcePath);
+	try {
+	    File temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
+					    "." + FilenameUtils.getExtension(resourcePath));
+	    FileUtils.copyURLToFile(inputUrl, temp);
+	    temp.deleteOnExit();
+	    System.load(temp.getAbsolutePath());
+	} catch (Exception|Error e) {
     }
 
 // Provide native subComputeReadLikelihoodGivenHaplotypeLog10Native
 
 
     public native double
-	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
-							  int hapStartIndex,
-							  int paddedHaplotypeLength,
-							  double [][] matchMatrix,
-							  double [][] prior,
-							  double [][] transition,
-							  double [][] insertion,
-							  double [][] deletion);
+	subComputeReadLikelihoodGivenHaplotypeLog10Native(int,
+							  int,
+							  int,
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][]);
 }

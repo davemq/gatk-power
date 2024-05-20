@@ -130,6 +130,11 @@ our native routine return src_c{jdouble}.
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java
 package com.ibm.power.pairhmm;
+
+import Java.io.File;
+import Java.net.URL;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 #+end_src
 
 ** New Java class PowerPairHMM
@@ -152,7 +157,16 @@ public class PowerPairHMM {
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
     static {
-	System.loadLibrary("vsx_pairhmm");
+	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
+	String resourcePath = "native/" + systemLibraryName;
+	URL inputUrl = PowerPairHMM.class.getResource(resourcePath);
+	try {
+	    File temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
+					    "." + FilenameUtils.getExtension(resourcePath));
+	    FileUtils.copyURLToFile(inputUrl, temp);
+	    temp.deleteOnExit();
+	    System.load(temp.getAbsolutePath());
+	} catch (Exception|Error e) {
     }
 #+end_src
 
@@ -160,14 +174,14 @@ public class PowerPairHMM {
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
     public native double
-	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
-							  int hapStartIndex,
-							  int paddedHaplotypeLength,
-							  double [][] matchMatrix,
-							  double [][] prior,
-							  double [][] transition,
-							  double [][] insertion,
-							  double [][] deletion);
+	subComputeReadLikelihoodGivenHaplotypeLog10Native(int,
+							  int,
+							  int,
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][],
+							  double [][]);
 }
 #+end_src
 
@@ -331,6 +345,7 @@ This C function
   - save the array src_c{jdoubleArray} and the native src_c{jdoubleP}
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
+static
 jdoubleP *
 getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 {
@@ -339,7 +354,8 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 	Get the length of the outer array.
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
-	jsize len = (*env)->GetArrayLength(env, matrix);
+	jsize jlen = (*env)->GetArrayLength(env, matrix);
+	size_t len = (size_t) jlen;
 #+end_src
 
 	Allocate src_c{jdoubleP} and src_c{jdoubleArray} arrays. We
@@ -367,7 +383,7 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
           src_c{ptrs[i]}
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
-	for (jsize i = 0; i < len; i++) {
+	for (jsize i = 0; i < jlen; i++) {
 		,*arrays[i] = (*env)->GetObjectArrayElement(env, matrix, i);
 		if (*arrays[i] == NULL) {
 			goto cleanarrays;
@@ -427,6 +443,7 @@ src_c{getDouble2dArray}, but leaves out checks for NULL pointers as
 there shouldn't be any.
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
+static
 void
 releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleP *native, jdoubleArrayP *jarray)
 {
@@ -476,7 +493,7 @@ src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHmm_subComputeReadLikelihoodGivenHaplotypeLog10Native
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
