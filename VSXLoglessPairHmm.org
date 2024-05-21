@@ -132,6 +132,7 @@ our native routine return src_c{jdouble}.
 package com.ibm.power.pairhmm;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.FileUtils;
@@ -160,18 +161,19 @@ public class PowerPairHMM {
 	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
 	String resourcePath = "native/" + systemLibraryName;
 	URL inputUrl = PowerPairHMM.class.getResource(resourcePath);
+	File temp;
 	try {
-	    File temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
+	    temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
 					    "." + FilenameUtils.getExtension(resourcePath));
 	    FileUtils.copyURLToFile(inputUrl, temp);
-	    temp.deleteOnExit();
-	    System.load(temp.getAbsolutePath());
-	} catch (Exception|Error e) {
-	    System.out.println(String.format("Unable to load %s from %s (%s)",
-					     systemLibraryName, resourcePath,
-					     e.getMessage()));
-	    throw e;
 	}
+	catch (IOException e) {
+	    throw new IllegalArgumentException("Unable to load " +
+					       systemLibraryName + " from " +
+					       resourcePath, e);
+	}
+	temp.deleteOnExit();
+	System.load(temp.getAbsolutePath());
     }
 #+end_src
 
