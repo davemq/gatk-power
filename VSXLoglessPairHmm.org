@@ -171,18 +171,18 @@ public class PowerPairHMM {
     }
 #+end_src
 
-*** Provide native subComputeReadLikelihoodGivenHaplotypeLog10Native
+*** Provide native subComputeNative
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
     public native double
-	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
-							  int hapStartIndex,
-							  int paddedHaplotypeLength,
-							  double [][] matchMatrix,
-							  double [][] prior,
-							  double [][] transition,
-							  double [][] insertion,
-							  double [][] deletion);
+	subComputeNative(int paddedReadLength,
+			 int hapStartIndex,
+			 int paddedHaplotypeLength,
+			 double [][] matchMatrix,
+			 double [][] prior,
+			 double [][] transition,
+			 double [][] insertion,
+			 double [][] deletion);
 }
 #+end_src
 
@@ -210,7 +210,7 @@ public final class VSXLoglessPairHMM extends LoglessPairHMM {
 #+end_src
 
 
-*** Implement subComputeReadLikelihoodGivenHaplotypeLog10Native
+*** Implement subComputeNative
 
     src_java{class VSXLoglessPairHMM} will implement
     src_java{subComputeReadLikelihoodGivenHaplotypeLog10} in order to call
@@ -262,20 +262,20 @@ public final class VSXLoglessPairHMM extends LoglessPairHMM {
 #+end_src
 
         Now we call our native method
-        src_java{subComputeReadLikelihoodGivenHaplotypeLog10Native}:
+        src_java{subComputeNative}:
 
 #+attr_latex: :options \small
 #+begin_src java :comments org :tangle VSXLoglessPairHMM.java 
 	double finalSumProbabilities;
 	finalSumProbabilities =
-	    hmm.subComputeReadLikelihoodGivenHaplotypeLog10Native(paddedReadLength,
-								  hapStartIndex,
-								  paddedHaplotypeLength,
-								  matchMatrix,
-								  prior,
-								  transition,
-								  insertionMatrix,
-								  deletionMatrix);
+	    hmm.subComputeNative(paddedReadLength,
+				 hapStartIndex,
+				 paddedHaplotypeLength,
+				 matchMatrix,
+				 prior,
+				 transition,
+				 insertionMatrix,
+				 deletionMatrix);
 #+end_src
 
         The native method returns src_c{NAN} (Not A Number) if it
@@ -494,7 +494,7 @@ src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,

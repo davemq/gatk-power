@@ -193,7 +193,7 @@ releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleP *native, jdouble
 
 
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
