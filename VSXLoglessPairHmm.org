@@ -167,7 +167,7 @@ public class PowerPairHMM {
 	    temp.deleteOnExit();
 	    System.load(temp.getAbsolutePath());
 	} catch (Exception|Error e) {
-	    System.out.println(String.format("Unable to load %s from %s (%s), 
+	    System.out.println(String.format("Unable to load %s from %s (%s)",
 					     systemLibraryName, resourcePath,
 					     e.getMessage()));
 	    throw e;
