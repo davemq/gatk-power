@@ -45,8 +45,8 @@ public class PowerPairHMM {
 							  int hapStartIndex,
 							  int paddedHaplotypeLength,
 							  double [][] matchMatrix,
-							  double [][] prior,
-							  double [][] transition,
-							  double [][] insertion,
-							  double [][] deletion);
+							  double [][] priorMatrix,
+							  double [][] transitionMatrix,
+							  double [][] insertionMatrix,
+							  double [][] deletionMatrix);
 }
