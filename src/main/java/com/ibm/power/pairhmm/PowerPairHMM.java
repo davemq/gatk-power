@@ -33,8 +33,6 @@ public class PowerPairHMM {
 	    FileUtils.copyURLToFile(inputUrl, temp);
 	    temp.deleteOnExit();
 	    System.load(temp.getAbsolutePath());
-	} catch (Exception|Error e) {
-	}
     }
 
 // Provide native subComputeNative
