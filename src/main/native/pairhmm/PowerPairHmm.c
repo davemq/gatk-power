@@ -1,10 +1,10 @@
 /* Header files */
 
 /* We need to include */
-/* - jni.h to use JNI */
 /* - math.h for NAN */
 /* - stdlib.h to use src_c{calloc} and src_c{posix_memalign} */
 /* - string.h for src_c{memset} */
+/* - PowerPairHMM.h for JNI and function declarations */
 
 
 /*
@@ -12,10 +12,14 @@
  * document and re-tangle this file.
  */
 
-#include <jni.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "PowerPairHMM.h"
 
 /* Typedefs */
 
@@ -346,3 +350,7 @@ free_match:
 
 	return finalSumProbabilities;
 }
+
+#ifdef __cplusplus
+}
+#endif

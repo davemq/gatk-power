@@ -310,10 +310,10 @@ C code to implement the native functions.
 *** Header files
 
 We need to include
-- jni.h to use JNI
 - math.h for NAN
 - stdlib.h to use src_c{calloc} and src_c{posix_memalign}
 - string.h for src_c{memset}
+- PowerPairHMM.h for JNI and function declarations
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c  :exports none
 /*
@@ -323,10 +323,14 @@ We need to include
 #+end_src
 
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
-#include <jni.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "PowerPairHMM.h"
 #+end_src
 
 *** Typedefs
@@ -645,6 +649,10 @@ free_match:
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 	return finalSumProbabilities;
 }
+
+#ifdef __cplusplus
+}
+#endif
 #+end_src
 
 
