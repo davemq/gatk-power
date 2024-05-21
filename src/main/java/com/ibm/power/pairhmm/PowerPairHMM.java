@@ -23,7 +23,6 @@ public class PowerPairHMM {
 //     The class will load the native library through a src_java{static} block.[fn:3]
 
 
-{
     static {
 	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
 	String resourcePath = "native/" + systemLibraryName;

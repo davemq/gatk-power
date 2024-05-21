@@ -156,7 +156,6 @@ public class PowerPairHMM {
     The class will load the native library through a src_java{static} block.[fn:3]
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
-{
     static {
 	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
 	String resourcePath = "native/" + systemLibraryName;
