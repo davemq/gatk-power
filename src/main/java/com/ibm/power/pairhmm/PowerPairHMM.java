@@ -23,6 +23,7 @@ public class PowerPairHMM {
 //     The class will load the native library through a src_java{static} block.[fn:3]
 
 
+{
     static {
 	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
 	String resourcePath = "native/" + systemLibraryName;
@@ -33,6 +34,12 @@ public class PowerPairHMM {
 	    FileUtils.copyURLToFile(inputUrl, temp);
 	    temp.deleteOnExit();
 	    System.load(temp.getAbsolutePath());
+	} catch (Exception|Error e) {
+	    System.out.println(String.format("Unable to load %s from %s (%s), 
+					     systemLibraryName, resourcePath,
+					     e.getMessage()));
+	    throw e;
+	}
     }
 
 // Provide native subComputeNative
