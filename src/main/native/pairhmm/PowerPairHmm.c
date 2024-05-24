@@ -25,17 +25,17 @@ extern "C" {
 
 /* This C function */
 /* - gets the size of the outer array using src_c{GetObjectLength} */
-/* - allocates an array of src_c{jdoubleP} */
+/* - allocates an array of src_c{jdouble *} */
 /* - allocates an array of src_c{jdoubleArray} to use later to release */
 /*   memory */
 /* - for each element of the outer array */
 /*   - call src_c{GetDoubleArrayElements} to get access to the Java */
 /*     src_java{double [][]} */
-/*   - save the array src_c{jdoubleArray} and the native src_c{jdoubleP} */
+/*   - save the array src_c{jdoubleArray} and the native src_c{jdouble *} */
 
 
 static
-jdoubleP *
+jdouble **
 getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 {
 
@@ -49,18 +49,18 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
 
 
 
-	/* Allocate src_c{jdoubleP} and src_c{jdoubleArray} arrays. We */
-	/* use src_c{posix_memalign} for the src_c{jdoubleP} array to */
+	/* Allocate src_c{jdouble *} and src_c{jdoubleArray} arrays. We */
+	/* use src_c{posix_memalign} for the src_c{jdouble *} array to */
 	/* help the compiled code use POWER vector instructions. */
 
 
-	jdoubleP *ptrs;
+	jdouble **ptrs;
 
-	int rc = posix_memalign((void **)&ptrs, 16, len * sizeof(jdoubleP));
+	int rc = posix_memalign((void **)&ptrs, 16, len * sizeof(jdouble *));
 	if (rc != 0) {
 		return NULL;
 	}
-	(void) memset(ptrs, 0, len * sizeof(jdoubleP));
+	(void) memset(ptrs, 0, len * sizeof(jdouble *));
 
 	*arrays = calloc(len, sizeof(jdoubleArray));
 	if (*arrays == NULL) {
@@ -139,7 +139,7 @@ cleanptrs:
 
 static
 void
-releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleP *native, jdoubleArrayP *jarray)
+releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdoubleArrayP *jarray)
 {
 
 
