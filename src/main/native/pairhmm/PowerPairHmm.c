@@ -21,14 +21,6 @@ extern "C" {
 #include <string.h>
 #include "PowerPairHMM.h"
 
-/* Typedefs */
-
-/* Tracking pointer types is helped out by adding some typedefs. */
-
-
-typedef jdouble *jdoubleP;
-typedef jdoubleArray *jdoubleArrayP;
-
 /* getDouble2dArray: Get access to double [][] arrays */
 
 /* This C function */
