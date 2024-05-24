@@ -349,7 +349,7 @@ This C function
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 static
 jdouble **
-getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
+getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArray **arrays)
 {
 #+end_src
 
@@ -447,7 +447,7 @@ there shouldn't be any.
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 static
 void
-releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdoubleArrayP *jarray)
+releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdoubleArray **jarray)
 {
 #+end_src
 

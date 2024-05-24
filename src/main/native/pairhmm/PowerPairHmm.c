@@ -36,7 +36,7 @@ extern "C" {
 
 static
 jdouble **
-getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArrayP *arrays)
+getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArray **arrays)
 {
 
 
@@ -139,7 +139,7 @@ cleanptrs:
 
 static
 void
-releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdoubleArrayP *jarray)
+releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdoubleArray **jarray)
 {
 
 
