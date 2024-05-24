@@ -25,22 +25,8 @@ public class PowerPairHMM {
 
 
     static {
-	String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
-	String resourcePath = "native/" + systemLibraryName;
-	URL inputUrl = PowerPairHMM.class.getResource(resourcePath);
-	File temp;
-	try {
-	    temp = File.createTempFile(FilenameUtils.getBaseName(resourcePath),
-					    "." + FilenameUtils.getExtension(resourcePath));
-	    FileUtils.copyURLToFile(inputUrl, temp);
-	}
-	catch (IOException e) {
-	    throw new IllegalArgumentException("Unable to load " +
-					       systemLibraryName + " from " +
-					       resourcePath, e);
-	}
-	temp.deleteOnExit();
-	System.load(temp.getAbsolutePath());
+	final static String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
+	System.loadLibrary(systemLibraryName);
     }
 
 // Provide native subComputeNative
