@@ -55,6 +55,7 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArray **arrays)
 
 
 	jdouble **ptrs;
+	jdoubleArray *arrayp;
 
 	int rc = posix_memalign((void **)&ptrs, 16, len * sizeof(jdouble *));
 	if (rc != 0) {
@@ -62,10 +63,11 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArray **arrays)
 	}
 	(void) memset(ptrs, 0, len * sizeof(jdouble *));
 
-	*arrays = calloc(len, sizeof(jdoubleArray));
+	*arrays = calloc(len, sizeof(jdoubleArray *));
 	if (*arrays == NULL) {
 		goto cleanptrs;
 	}
+	arrayp = *arrays;
 
 
 
@@ -76,11 +78,11 @@ getDouble2dArray(JNIEnv *env, jobjectArray matrix, jdoubleArray **arrays)
 
 
 	for (jsize i = 0; i < jlen; i++) {
-		*arrays[i] = (*env)->GetObjectArrayElement(env, matrix, i);
-		if (*arrays[i] == NULL) {
+		arrayp[i] = (*env)->GetObjectArrayElement(env, matrix, i);
+		if (arrayp[i] == NULL) {
 			goto cleanarrays;
 		}
-		ptrs[i] = (*env)->GetDoubleArrayElements(env, *arrays[i], NULL);
+		ptrs[i] = (*env)->GetDoubleArrayElements(env, arrayp[i], NULL);
 		if (ptrs[i] == NULL) {
 			goto cleanarrays;
 		}
