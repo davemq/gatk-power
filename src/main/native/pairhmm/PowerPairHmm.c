@@ -149,18 +149,19 @@ releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdouble
 	/* First, get the length of the array. */
 
 
+	jdoubleArray *jarrayp = (*jarray);
 	jsize len = (*env)->GetArrayLength(env, matrix);
 
 
 
 	/* For each index from 0 to src_c{len - 1} */
 	/* - call ReleaseDoubleArrayElements with src_c{native[i]} and */
-        /*   src_c{*jarray[i]} */
+        /*   src_c{jarrayp[i]} */
 
 
 	for (int i = 0; i < len; i++) {
 		/* ReleaseDoubleArrayElements with mode=0 frees memory */
-		(*env)->ReleaseDoubleArrayElements(env, *jarray[i], native[i], 0);
+		(*env)->ReleaseDoubleArrayElements(env, jarrayp[i], native[i], 0);
 	}
 
 
