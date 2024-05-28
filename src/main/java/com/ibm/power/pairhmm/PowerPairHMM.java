@@ -25,7 +25,7 @@ public class PowerPairHMM {
 
 
     static {
-	final static String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
+	final String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
 	System.loadLibrary(systemLibraryName);
     }
 
