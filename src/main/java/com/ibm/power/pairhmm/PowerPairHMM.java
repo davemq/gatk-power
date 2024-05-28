@@ -17,16 +17,17 @@ import org.apache.commons.io.FileUtils;
 
 /// Provides native PairHMM code accelerated for Power vector
 /// instructions, via compiler optimizations.
-public class PowerPairHMM {
+public final class PowerPairHMM {
 
 // Implement load
 
 //     The class will load the native library through a src_java{static} block.[fn:3]
 
 
+    final static String nativeLibraryName = "vsx_pairhmm";
+
     static {
-	final String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
-	System.loadLibrary(systemLibraryName);
+	System.loadLibrary(nativeLibraryName);
     }
 
 // Provide native subComputeNative
