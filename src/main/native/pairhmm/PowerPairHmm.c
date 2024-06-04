@@ -18,8 +18,85 @@ extern "C" {
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "PowerPairHMM.h"
+
+#if 0
+#include <stdbool.h>
+
+extern void *__real_calloc(size_t, size_t);
+extern void __real_free(void *_Nullable);
+extern void * __real_malloc(size_t);
+extern int __real_posix_memalign(void **, size_t, size_t);
+
+#define HASHSHIFT 8
+#define HASHSIZE (2^HASHSHIFT)
+#define HASHMASK (HASHSIZE-1)
+
+struct hash {
+	int address;
+};
+static struct hash hash[HASHSIZE] = { 0 };
+
+#define HASH(addr) ((unsigned long) (addr) >> 5) & HASHMASK
+
+int
+__wrap_posix_memalign(void **memptr, size_t alignment, size_t size)
+{
+	int rc;
+	void *pc;
+
+	rc = __real_posix_memalign(memptr, alignment, size);
+	pc = __builtin_return_address(1U);
+
+	hash[HASH(*memptr)].address++;
+
+	return rc;
+}
+
+void *
+__wrap_calloc(size_t nmemb, size_t size)
+{
+	void *addr;
+	void *pc;
+
+	addr = __real_calloc(nmemb, size);
+	pc = __builtin_return_address(1U);
+
+	hash[HASH(addr)].address++;
+
+	return addr;
+}
+
+void *
+__wrap_malloc(size_t size)
+{
+	void *addr;
+	void *pc;
+
+	addr = __real_malloc(size);
+	pc = __builtin_return_address(1U);
+
+	hash[HASH(addr)].address++;
+
+	return addr;
+
+}
+
+void
+__wrap_free(void *_Nullable ptr)
+{
+	void *pc;
+	
+	__real_free(ptr);
+	
+
+	hash[HASH(ptr)].address--;
+
+	return;
+}
+#endif	/* 0 */
 
 /* getDouble2dArray: Get access to double [][] arrays */
 
@@ -198,7 +275,7 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
  jobjectArray deletionMatrix)
 {
-
+	mtrace();
 
 
 	/* Recall in [[Second loop]] that src_java{hapStartIndex}, */
@@ -338,10 +415,23 @@ free_prior:
 free_match:
 	releaseDouble2dArray(env, matchMatrix, match, &jMatch);
 
-
-
 	/* Finally, we return src_c{finalSumProbabilities}. */
 
+
+#if 0
+	bool found = false;
+	for (int i = 0; i < HASHSIZE; i++) {
+		if (hash[i].address != 0) {
+			found = true;
+			fprintf(stderr, "hash cell %d: %d allocations not freed\n",
+				i, hash[i].address);
+			hash[i].address = 0;
+		}
+	}
+	if (!found) {
+		fprintf(stderr, "all allocations freed\n");
+	}
+#endif	/* 0 */
 
 	return finalSumProbabilities;
 }
