@@ -8,4 +8,6 @@ build
 *~
 
 # Ignore .tex files
-.tex
+*.tex
+*.pdf
+_minted-*/
