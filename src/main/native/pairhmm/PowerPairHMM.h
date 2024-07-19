@@ -9,10 +9,10 @@ extern "C" {
 #endif
 /*
  * Class:     com_ibm_power_pairhmm_PowerPairHMM
- * Method:    subComputeNative
+ * Method:    subComputeReadLikelihoodGivenHaplotypeLog10Native
  * Signature: (III[[D[[D[[D[[D[[D)D
  */
-JNIEXPORT jdouble JNICALL Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
+JNIEXPORT jdouble JNICALL Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
   (JNIEnv *, jobject, jint, jint, jint, jobjectArray, jobjectArray, jobjectArray, jobjectArray, jobjectArray);
 
 #ifdef __cplusplus

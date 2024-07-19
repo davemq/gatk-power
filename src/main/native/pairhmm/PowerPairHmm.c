@@ -138,6 +138,7 @@ cleanptrs:
 /* src_c{getDouble2dArray}, but leaves out checks for NULL pointers as */
 /* there shouldn't be any. */
 
+/* #+attr_latex: :options \footnotesize */
 
 static
 void
@@ -185,14 +186,20 @@ releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdouble
 /* doubles. This is passed as a src_c{jObjectArray} to */
 /* C/C++. src_c{GetObjectArrayLength} is called to get the length of the */
 /* outer array. Then a array of double pointers (src_c{double *}) is */
-/* dynamically allocated using src_c{malloc} or src_c++{new}. */
+/* dynamically allocated using src_c{malloc}. */
 
 /* The native code for the main loop of */
 /* src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with */
 
+/* #+attr_latex: :options \small */
 
+/*
+ * Class:     com_ibm_power_pairhmm_PowerPairHMM
+ * Method:    subComputeReadLikelihoodGivenHaplotypeLog10Native
+ * Signature: (III[[D[[D[[D[[D[[D)D
+ */
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
@@ -244,9 +251,10 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 
 
 
-	/* For each of the matrices, we call a new routine */
-	/* src_c{getDouble2dArray} to retrieve the array elements and track them. */
+/* 	For each of the matrices, we call a new routine */
+/* 	src_c{getDouble2dArray} to retrieve the array elements and track them. */
 
+/* #+attr_latex: :options \small */
 
 	if ((match = getDouble2dArray(env, matchMatrix, &jMatch)) == NULL) {
 		return NAN;
@@ -282,6 +290,10 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 		insertionToInsertion = 3,
 		matchToDeletion      = 4,
 		deletionToDeletion   = 5;
+
+
+
+/* #+attr_latex: :options \small */
 
 	for (int i = 1; i < readLength; i++) {
 		/* +1 here is because hapStartIndex is 0-based, but our matrices are 1 */
