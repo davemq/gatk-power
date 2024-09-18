@@ -17,7 +17,7 @@ import org.apache.commons.io.FileUtils;
 
 /// Provides native PairHMM code accelerated for Power vector
 /// instructions, via compiler optimizations.
-public final class PowerPairHMM {
+public class PowerPairHMM {
 
 // Implement load
 
@@ -30,11 +30,11 @@ public final class PowerPairHMM {
 	System.loadLibrary(nativeLibraryName);
     }
 
-// Provide native subComputeNative
+// Provide native subComputeReadLikelihoodGivenHaplotypeLog10Native
 
 
     public native double
-	subComputeNative(int paddedReadLength,
+	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
 			 int hapStartIndex,
 			 int paddedHaplotypeLength,
 			 double [][] matchMatrix,

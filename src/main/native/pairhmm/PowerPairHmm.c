@@ -18,85 +18,8 @@ extern "C" {
 
 #include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include "PowerPairHMM.h"
-
-#if 0
-#include <stdbool.h>
-
-extern void *__real_calloc(size_t, size_t);
-extern void __real_free(void *_Nullable);
-extern void * __real_malloc(size_t);
-extern int __real_posix_memalign(void **, size_t, size_t);
-
-#define HASHSHIFT 8
-#define HASHSIZE (2^HASHSHIFT)
-#define HASHMASK (HASHSIZE-1)
-
-struct hash {
-	int address;
-};
-static struct hash hash[HASHSIZE] = { 0 };
-
-#define HASH(addr) ((unsigned long) (addr) >> 5) & HASHMASK
-
-int
-__wrap_posix_memalign(void **memptr, size_t alignment, size_t size)
-{
-	int rc;
-	void *pc;
-
-	rc = __real_posix_memalign(memptr, alignment, size);
-	pc = __builtin_return_address(1U);
-
-	hash[HASH(*memptr)].address++;
-
-	return rc;
-}
-
-void *
-__wrap_calloc(size_t nmemb, size_t size)
-{
-	void *addr;
-	void *pc;
-
-	addr = __real_calloc(nmemb, size);
-	pc = __builtin_return_address(1U);
-
-	hash[HASH(addr)].address++;
-
-	return addr;
-}
-
-void *
-__wrap_malloc(size_t size)
-{
-	void *addr;
-	void *pc;
-
-	addr = __real_malloc(size);
-	pc = __builtin_return_address(1U);
-
-	hash[HASH(addr)].address++;
-
-	return addr;
-
-}
-
-void
-__wrap_free(void *_Nullable ptr)
-{
-	void *pc;
-	
-	__real_free(ptr);
-	
-
-	hash[HASH(ptr)].address--;
-
-	return;
-}
-#endif	/* 0 */
 
 /* getDouble2dArray: Get access to double [][] arrays */
 
@@ -215,6 +138,7 @@ cleanptrs:
 /* src_c{getDouble2dArray}, but leaves out checks for NULL pointers as */
 /* there shouldn't be any. */
 
+/* #+attr_latex: :options \footnotesize */
 
 static
 void
@@ -267,15 +191,21 @@ releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdouble
 /* The native code for the main loop of */
 /* src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with */
 
+/* #+attr_latex: :options \small */
 
+/*
+ * Class:     com_ibm_power_pairhmm_PowerPairHMM
+ * Method:    subComputeReadLikelihoodGivenHaplotypeLog10Native
+ * Signature: (III[[D[[D[[D[[D[[D)D
+ */
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
  jobjectArray deletionMatrix)
 {
-	mtrace();
+
 
 
 	/* Recall in [[Second loop]] that src_java{hapStartIndex}, */
@@ -321,9 +251,10 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 
 
 
-	/* For each of the matrices, we call a new routine */
-	/* src_c{getDouble2dArray} to retrieve the array elements and track them. */
+/* 	For each of the matrices, we call a new routine */
+/* 	src_c{getDouble2dArray} to retrieve the array elements and track them. */
 
+/* #+attr_latex: :options \small */
 
 	if ((match = getDouble2dArray(env, matchMatrix, &jMatch)) == NULL) {
 		return NAN;
@@ -359,6 +290,10 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 		insertionToInsertion = 3,
 		matchToDeletion      = 4,
 		deletionToDeletion   = 5;
+
+
+
+/* #+attr_latex: :options \small */
 
 	for (int i = 1; i < readLength; i++) {
 		/* +1 here is because hapStartIndex is 0-based, but our matrices are 1 */
@@ -415,23 +350,10 @@ free_prior:
 free_match:
 	releaseDouble2dArray(env, matchMatrix, match, &jMatch);
 
+
+
 	/* Finally, we return src_c{finalSumProbabilities}. */
 
-
-#if 0
-	bool found = false;
-	for (int i = 0; i < HASHSIZE; i++) {
-		if (hash[i].address != 0) {
-			found = true;
-			fprintf(stderr, "hash cell %d: %d allocations not freed\n",
-				i, hash[i].address);
-			hash[i].address = 0;
-		}
-	}
-	if (!found) {
-		fprintf(stderr, "all allocations freed\n");
-	}
-#endif	/* 0 */
 
 	return finalSumProbabilities;
 }
