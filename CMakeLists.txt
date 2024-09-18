@@ -7,7 +7,7 @@ find_package(JNI)
 include_directories(${JNI_INCLUDE_DIRS})
 
 # common compiler and linker settings
-set(CMAKE_C_COMPILER /usr/bin/clang)
+set(CMAKE_C_COMPILER /usr/bin/gcc)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2 ")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=power9 -mtune=power9 -mvsx -maltivec")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wformat -Werror=format-security -Wconversion -Wfloat-conversion")
