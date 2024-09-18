@@ -22,7 +22,7 @@ default value, which is a function that removes indentation.
 * Introduction
 
 This shows how to "port" the GATK logless pair HMM Java implementation
-to C or C++, so we can have gcc compile into code that uses VSX vector
+to C, so we can have gcc compile into code that uses VSX vector
 instructions on Power 9 and above.[fn:1] The goal is to provide a
 vector pair HMM implementation on Power that has significantly better
 performance than the non-vector implementation, and is close to the
@@ -77,21 +77,21 @@ src_java{subComputeReadLikelihoodGivenHaplotypeLog10}:
 
 These are integer variables that will need to be passed to a native
 routine:
-- src_c++{hapStartIndex}
-- src_c++{paddedHaplotypeLength}
-- src_c++{paddedReadLength}
+- src_java{hapStartIndex}
+- src_java{paddedHaplotypeLength}
+- src_java{paddedReadLength}
 
 There are also these matrices that are declared as src_c++{double
 [][]}:
-- src_c++{deletionMatrix}
-- src_c++{insertionMatrix}
-- src_c++{matchMatrix}
-- src_c++{prior}
-- src_c++{transition}
+- src_java{deletionMatrix}
+- src_java{insertionMatrix}
+- src_java{matchMatrix}
+- src_java{prior}
+- src_java{transition}
 
 These variables all need to be passed to the native routine. The
 integer variables don't get modified, so are simple to deal with
-directly, other than casting from src_c++{jint} to src_c++{int}.
+directly, other than casting from src_c{jint} to src_c{int}.
 
 For the matrices, we have more work to do to make these available to
 the native code.
@@ -157,17 +157,18 @@ public class PowerPairHMM {
     The class will load the native library through a src_java{static} block.[fn:3]
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
+    final static String nativeLibraryName = "vsx_pairhmm";
+
     static {
-	final String systemLibraryName = System.mapLibraryName("vsx_pairhmm");
-	System.loadLibrary(systemLibraryName);
+	System.loadLibrary(nativeLibraryName);
     }
 #+end_src
 
-*** Provide native subComputeNative
+*** Provide native subComputeReadLikelihoodGivenHaplotypeLog10Native
 
 #+begin_src java :comments org :tangle src/main/java/com/ibm/power/pairhmm/PowerPairHMM.java 
     public native double
-	subComputeNative(int paddedReadLength,
+	subComputeReadLikelihoodGivenHaplotypeLog10Native(int paddedReadLength,
 			 int hapStartIndex,
 			 int paddedHaplotypeLength,
 			 double [][] matchMatrix,
@@ -202,7 +203,7 @@ public final class VSXLoglessPairHMM extends LoglessPairHMM {
 #+end_src
 
 
-*** Implement subComputeNative
+*** Implement subComputeReadLikelihoodGivenHaplotypeLog10Native
 
     src_java{class VSXLoglessPairHMM} will implement
     src_java{subComputeReadLikelihoodGivenHaplotypeLog10} in order to call
@@ -254,13 +255,13 @@ public final class VSXLoglessPairHMM extends LoglessPairHMM {
 #+end_src
 
         Now we call our native method
-        src_java{subComputeNative}:
+        src_java{subComputeReadLikelihoodGivenHaplotypeLog10Native}:
 
 #+attr_latex: :options \small
 #+begin_src java :comments org :tangle VSXLoglessPairHMM.java 
 	double finalSumProbabilities;
 	finalSumProbabilities =
-	    hmm.subComputeNative(paddedReadLength,
+	    hmm.subComputeReadLikelihoodGivenHaplotypeLog10Native(paddedReadLength,
 				 hapStartIndex,
 				 paddedHaplotypeLength,
 				 matchMatrix,
@@ -432,7 +433,8 @@ src_c{releaseDouble2dArray} is similar to the clean up code in
 src_c{getDouble2dArray}, but leaves out checks for NULL pointers as
 there shouldn't be any.
 
-#+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
+#+attr_latex: :options \footnotesize
+#+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c
 static
 void
 releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdoubleArray **jarray)
@@ -477,14 +479,20 @@ A src_java{double [][]} is implemented as an array of arrays of
 doubles. This is passed as a src_c{jObjectArray} to
 C/C++. src_c{GetObjectArrayLength} is called to get the length of the
 outer array. Then a array of double pointers (src_c{double *}) is
-dynamically allocated using src_c{malloc} or src_c++{new}.
+dynamically allocated using src_c{malloc}.
 
 The native code for the main loop of
 src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with
 
+#+attr_latex: :options \small
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
+/*
+ * Class:     com_ibm_power_pairhmm_PowerPairHMM
+ * Method:    subComputeReadLikelihoodGivenHaplotypeLog10Native
+ * Signature: (III[[D[[D[[D[[D[[D)D
+ */
 JNIEXPORT jdouble JNICALL
-Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
+Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeReadLikelihoodGivenHaplotypeLog10Native
 (JNIEnv *env, jobject this, jint paddedReadLength, jint hapStartIndex,
  jint paddedHaplotypeLength, jobjectArray matchMatrix, jobjectArray priorMatrix,
  jobjectArray transitionMatrix, jobjectArray insertionMatrix,
@@ -534,6 +542,7 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 	For each of the matrices, we call a new routine
 	src_c{getDouble2dArray} to retrieve the array elements and track them.
 
+#+attr_latex: :options \small
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 	if ((match = getDouble2dArray(env, matchMatrix, &jMatch)) == NULL) {
 		return NAN;
@@ -570,6 +579,7 @@ Java_com_ibm_power_pairhmm_PowerPairHMM_subComputeNative
 		deletionToDeletion   = 5;
 #+end_src
 
+#+attr_latex: :options \small
 #+begin_src c :comments org :tangle src/main/native/pairhmm/PowerPairHmm.c 
 	for (int i = 1; i < readLength; i++) {
 		/* +1 here is because hapStartIndex is 0-based, but our matrices are 1 */
@@ -661,6 +671,7 @@ src_java{AVX_LOGLESS_CACHING}, as these are not available on Power.
 
         The src_java{FASTEST_AVAILABLE} element will be replaced with this:
 
+#+attr_latex: :options \footnotesize
 #+begin_src java :comments org :tangle PairHMM-update.java
         /* Uses the fastest available PairHMM implementation supported on the platform.
            Order of precedence:
@@ -674,7 +685,8 @@ src_java{AVX_LOGLESS_CACHING}, as these are not available on Power.
 		return hmm;
             }
             catch ( UserException.HardwareFeatureException e ) {
-                logger.warn("***WARNING: Machine does not have the VSX instruction set support needed for the accelerated VSX PairHmm. " +
+                logger.warn("***WARNING: Machine does not have the VSX " +
+			    "instruction set support needed for the accelerated VSX PairHmm. " +
                             "Falling back to the MUCH slower LOGLESS_CACHING implementation!");
                 return new LoglessPairHMM();
             }

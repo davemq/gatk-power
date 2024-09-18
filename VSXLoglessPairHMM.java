@@ -20,7 +20,7 @@ import com.ibm.power.pairhmm.PowerPairHMM;
 
 public final class VSXLoglessPairHMM extends LoglessPairHMM {
 
-// Implement subComputeNative
+// Implement subComputeReadLikelihoodGivenHaplotypeLog10Native
 
 //     src_java{class VSXLoglessPairHMM} will implement
 //     src_java{subComputeReadLikelihoodGivenHaplotypeLog10} in order to call
@@ -75,13 +75,13 @@ public final class VSXLoglessPairHMM extends LoglessPairHMM {
 
 
 //         Now we call our native method
-//         src_java{subComputeNative}:
+//         src_java{subComputeReadLikelihoodGivenHaplotypeLog10Native}:
 
 // #+attr_latex: :options \small
 
 	double finalSumProbabilities;
 	finalSumProbabilities =
-	    hmm.subComputeNative(paddedReadLength,
+	    hmm.subComputeReadLikelihoodGivenHaplotypeLog10Native(paddedReadLength,
 				 hapStartIndex,
 				 paddedHaplotypeLength,
 				 matchMatrix,

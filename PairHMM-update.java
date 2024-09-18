@@ -21,8 +21,9 @@
 
 
 
-        // The src_java{FASTEST_AVAILABLE} element will be replaced with this:
+//         The src_java{FASTEST_AVAILABLE} element will be replaced with this:
 
+// #+attr_latex: :options \footnotesize
 
         /* Uses the fastest available PairHMM implementation supported on the platform.
            Order of precedence:
@@ -36,7 +37,8 @@
 		return hmm;
             }
             catch ( UserException.HardwareFeatureException e ) {
-                logger.warn("***WARNING: Machine does not have the VSX instruction set support needed for the accelerated VSX PairHmm. " +
+                logger.warn("***WARNING: Machine does not have the VSX " +
+			    "instruction set support needed for the accelerated VSX PairHmm. " +
                             "Falling back to the MUCH slower LOGLESS_CACHING implementation!");
                 return new LoglessPairHMM();
             }

@@ -186,7 +186,7 @@ releaseDouble2dArray(JNIEnv *env, jobjectArray matrix, jdouble **native, jdouble
 /* doubles. This is passed as a src_c{jObjectArray} to */
 /* C/C++. src_c{GetObjectArrayLength} is called to get the length of the */
 /* outer array. Then a array of double pointers (src_c{double *}) is */
-/* dynamically allocated using src_c{malloc} or src_c++{new}. */
+/* dynamically allocated using src_c{malloc}. */
 
 /* The native code for the main loop of */
 /* src_java{subComputeReadLikelihoodGivenHaplotypeLog10} will start with */
