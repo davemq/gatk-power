@@ -15,7 +15,7 @@ But even with this, org-babel-tangle will, by default, remove the
 indentation.
 
 I had to write a new function that merely returns the "code" and set
-org-babel-process-comment-text that that new function, rather than the
+org-babel-process-comment-text to that new function, rather than the
 default value, which is a function that removes indentation.
 #+end_comment
 
