@@ -1,0 +1,149 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil expand-links:t f:t
+#+options: inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+title: Building GATK
+#+author: Dave Marquardt
+#+email: davemarq@us.ibm.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 30.0.91 (Org mode 9.7.11)
+#+cite_export:
+#+property: header-args :exports code
+#+LATEX_HEADER: \usepackage{minted}
+
+This document shows how to build GATK with Power VSX instructions
+enabled for the Pair HMM algorithm.
+
+* Install tools
+
+** Install build tools
+
+On a Power LPAR running RHEL, install these build tools:
+
+- cmake
+- gcc
+- gcc-c++
+- git
+- git-lfs
+- Java 17
+- maven
+- wget
+
+Run
+
+#+begin_src sh
+sudo dnf install cmake gcc gcc-c++ git git-lfs java-17-openjdk \
+     java-17-openjdk-devel maven wget
+#+end_src
+
+You may have multiple versions of Java installed, so you'll want to
+make java and javac default to using Java 17:
+
+#+begin_src sh
+sudo alternatives --config java
+sudo alternatives --config javac
+#+end_src
+
+and select the lines for Java 17.
+
+** Install conda
+
+If you don't have conda installed on your build system, you'll need to
+download and install it.[fn:1]
+
+#+begin_src sh
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-ppc64le.sh \
+     -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm ~/miniconda3/miniconda.sh
+~/miniconda3/bin/conda init bash
+~/miniconda3/bin/conda init zsh
+#+end_src
+
+You'll want to exit restart your shell to pick up shell settings for
+conda.
+
+* gatk-power
+
+** Clone gatk-power
+
+Run
+
+#+begin_src sh
+git clone https://github.com/davemq/gatk-power.git
+#+end_src
+
+** Build gatk-power
+
+#+begin_src sh
+cd gatk-power
+./gradlew publishToMavenLocal
+sudo mkdir -p /usr/java/packages/lib
+sudo cp ./build/native/libvsx_pairhmm.so /usr/java/packages/lib
+cd ..
+#+end_src
+
+* GATK
+
+** Clone GATK
+
+Run
+
+#+begin_src sh
+git clone --branch nonative https://github.com/davemq/gatk.git
+#+end_src
+
+** Build GATK
+
+#+begin_src sh
+cd gatk
+./gradlew bundle
+cp ./build/gatk-4.5.0.0-26-gb0ac604-SNAPSHOT.zip /tmp
+cd ..
+#+end_src
+
+* conda package
+
+** Clone conda recipe repository
+
+#+begin_src sh
+git clone --branch gatk4.5 https://github.com/davemq/biobuilds.git
+#+end_src
+
+** Build conda package
+
+#+begin_src sh
+cd biobuilds
+conda install conda-build
+conda config --append channels conda-forge
+conda build gatk4/4.5.0.0
+cd ..
+#+end_src
+
+The conda package for GATK 4.5.0.0 should now be in
+~/miniconda3/conda-bld/linux-ppc64le as gatk-4.5.0.0-0.tar.bz2.
+
+* Install conda package
+
+To use the new conda package, you can either copy it to a common conda
+repository you already use, or add "local" to your channel list, or
+specify src_sh{-c local} when installing in a conda environment.
+
+#+begin_src sh
+conda config --prepend channels local
+conda install gatk=4.5.0.0
+#+end_src
+
+or
+
+#+begin_src sh
+conda install -c local gatk=4.5.0.0
+#+end_src
+
+* Footnotes
+
+[fn:1]From https://docs.anaconda.com/miniconda/, modified for ppc64le. 
